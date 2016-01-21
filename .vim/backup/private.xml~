@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root>
+  <appdef>
+    <appname>iTERM2</appname>
+    <equal>com.google.iterm2</equal>
+  </appdef>
+  <appdef>
+    <appname>MACVIM</appname>
+    <equal>org.vim.MacVim</equal>
+  </appdef>
+  <item>
+    <name>Escape with EISUU(Terminal)</name>
+    <identifier>private.app_terminal_esc_with_eisuu</identifier>
+    <only>iTERM2, TERMINAL, MACVIM</only>
+    <autogen>__KeyToKey__ KeyCode::ESCAPE, KeyCode::ESCAPE, KeyCode::JIS_EISUU</autogen>
+    <autogen>__KeyToKey__ KeyCode::BRACKET_LEFT, VK_CONTROL, KeyCode::BRACKET_LEFT, VK_CONTROL, KeyCode::JIS_EISUU</autogen>
+  </item>
+</root>

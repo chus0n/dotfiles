@@ -1,0 +1,5 @@
+syntax enable
+set number
+set background=dark
+colorscheme solarized
+set guifont=Source\ Code\ Pro\ for\ Powerline:h14
