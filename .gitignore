@@ -1,9 +1,6 @@
 .DS_Store
-!.vim/
-.vim/*
-!.vim/bundle/
-!.vim/bundle/neobundle.vim
-!.vim/backup/
-!.vim/undo/
-!.vim/colors/
-!.vim/tmp/
+.vim/bundle/*
+.vim/backup/*
+.vim/undo/*
+.vim/colors/*
+.vim/tmp/*

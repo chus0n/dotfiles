@@ -1,6 +1,0 @@
-<?php
-
-
-$msg = "Hello World.";
-echo $msg;
-var_dump($msg);
