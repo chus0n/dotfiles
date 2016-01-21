@@ -1,0 +1,7 @@
+[user]
+	name = chus0n
+	email = public.chuson@gmail.com
+[credential]
+	helper = osxkeychain
+[ghq]
+	root = /Users/yuki/src

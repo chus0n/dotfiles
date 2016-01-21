@@ -1,0 +1,6 @@
+DS_FILE
+.vim/bundle/*
+.vim/backup/*
+.vim/undo/*
+.vim/colors/*
+.vim/tmp/*
