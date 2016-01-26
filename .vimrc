@@ -63,6 +63,9 @@ set directory=$HOME/.vim/tmp
 " undo
 set undodir=$HOME/.vim/undo
 
+" help を q で閉じる
+autocmd FileType help nnoremap <buffer> q <C-w>c
+
 " NeoBundle plugin {{
 if 0 | endif
 
