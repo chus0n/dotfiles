@@ -66,7 +66,7 @@ set undodir=$HOME/.vim/undo
 " help を q で閉じる
 autocmd FileType help nnoremap <buffer> q <C-w>c
 
-" NeoBundle plugin {{
+" NeoBundle plugin {{{
 if 0 | endif
 
 if has('vim_starting')
@@ -114,10 +114,10 @@ filetype plugin indent on
 " If there are uninstalled bundles found on startup,
 " this will convenientry prompt you to install them.
 NeoBundleCheck
-" }}
+" }}}
 
 
-" Unite.vim {{
+" Unite.vim {{{
 " 入力モードで開始する
 let g:unite_enable_start_=1
 " buffer list
@@ -125,7 +125,7 @@ noremap <C-P> :Unite buffer<CR>
 " file list
 noremap <C-N> :Unite -buffer-name=file file<CR>
 " current file list
-noremap <C-Z> :Unite file-mru<CR>
+noremap <C-Z> :Unite file_mru<CR>
 " window を分割して開く
 au FileType unite nnoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
 au FileType unite inoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
@@ -135,23 +135,23 @@ au FileType unite nnoremap <silent> <buffer> <expr> <C-K> unite#do_action('vspli
 " ESCキーを二回押すと終了する
 au FileType unite nnoremap <silent> <buffer> <expr> <ESC><ESC> :q<CR>
 au FileType unite nnoremap <silent> <buffer> <expr> <ESC><ESC> <ESC>:q<CR>
-" }}
+" }}}
 
-" vim-indent-guides {{
+" vim-indent-guides {{{
 let g:indent_guides_enable_on_vim_startup = 1
-" }}
+" }}}
 
-" powerline {{
+" powerline {{{
 set laststatus=2
 set showtabline=2
 set noshowmode
-" }}
+" }}}
 
-" markdown {{
+" markdown {{{
 au BufRead,BufNewFile *.md set filetype=markdown
-" }}
+" }}}
 
-" neocomplete {{
+" neocomplete {{{
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplete.
@@ -222,9 +222,9 @@ endif
 " For perlomni.vim setting.
 " https://github.com/c9s/perlomni.vim
 " let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-" }}
+" }}}
 
-" neosnippet {{
+" neosnippet {{{
 " Plugin key-mappings
 imap <C-k>    <Plug>(neosnippet_expand_or_jump)
 smap <C-k>    <Plug>(neosnippet_expand_or_jump)
@@ -242,4 +242,4 @@ smap <expr><TAB> neosnippet#expandble_or_jumpable() ?
 if has('conceal')
   set conceallevel=2 concealcursor=niv
 endif
-" }}
+" }}}
