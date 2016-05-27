@@ -5,3 +5,5 @@
 	helper = osxkeychain
 [ghq]
 	root = /Users/yuki/src
+[core]
+	excludesfile = /Users/yuki/.gitignore
