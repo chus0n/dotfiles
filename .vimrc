@@ -8,9 +8,9 @@ set expandtab
 set shiftwidth=2
 
 " color settings
-set background=dark
-colorscheme solarized
-let g:solarized_termcolors=256
+"set background=dark
+"colorscheme solarized
+"let g:solarized_termcolors=256
 
 " search
 set ignorecase    " 大文字小文字を区別しない
@@ -93,6 +93,7 @@ NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'Shougo/neocomplete'
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tomtom/tcomment_vim'
@@ -106,6 +107,7 @@ NeoBundle 'plasticboy/vim-markdown'
 NeoBundle 'kannokanno/previm'
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'https://github.com/powerline/powerline.git', { 'rtp' : 'powerline/bindings/vim'}
+NeoBundle 'tomasr/molokai'
 
 call neobundle#end()
 
