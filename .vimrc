@@ -108,6 +108,7 @@ NeoBundle 'kannokanno/previm'
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'https://github.com/powerline/powerline.git', { 'rtp' : 'powerline/bindings/vim'}
 NeoBundle 'tomasr/molokai'
+NeoBundle 'lilydjwg/colorizer'
 
 call neobundle#end()
 
