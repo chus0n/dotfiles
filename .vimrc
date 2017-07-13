@@ -7,11 +7,6 @@ set autoindent
 set expandtab
 set shiftwidth=2
 
-" color settings
-"set background=dark
-"colorscheme solarized
-"let g:solarized_termcolors=256
-
 " search
 set ignorecase    " 大文字小文字を区別しない
 set smartcase     " 検索文字に大文字がある場合は大文字小文字を区別
@@ -66,59 +61,63 @@ set undodir=$HOME/.vim/undo
 " help を q で閉じる
 autocmd FileType help nnoremap <buffer> q <C-w>c
 
-" NeoBundle plugin {{{
-if 0 | endif
-
-if has('vim_starting')
-    if &compatible
-        set nocompatible    " Be iMproved
-    endif
-
-    " Required
-    set runtimepath+=~/.vim/bundle/neobundle.vim/
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
 endif
 
-" Required
-call neobundle#begin(expand('~/.vim/bundle/'))
+" Required:
+set runtimepath+=/Users/yuki/.vim/dein/repos/github.com/Shougo/dein.vim
 
-" Let NeoBundle manage NeoBundle
-" Required
-NeoBundleFetch 'Shougo/neobundle.vim'
+" Required:
+if dein#load_state('/Users/yuki/.vim/dein')
+  call dein#begin('/Users/yuki/.vim/dein')
 
-" My Bundles here:
-" Refer to |:NeoBundle-examples|.
-" Note: You don't set neobundle setting in .gvimrc!
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'Shougo/neocomplete'
-NeoBundle 'Shougo/neosnippet'
-NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'ujihisa/unite-colorscheme'
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'tpope/vim-surround'
-NeoBundle 'tomtom/tcomment_vim'
-NeoBundle 'nathanaelkane/vim-indent-guides'
-NeoBundle 'othree/html5.vim'
-NeoBundle 'hail2u/vim-css3-syntax'
-NeoBundle 'jelera/vim-javascript-syntax'
-NeoBundle 'mattn/emmet-vim'
-NeoBundle 'bronson/vim-trailing-whitespace'
-NeoBundle 'plasticboy/vim-markdown'
-NeoBundle 'kannokanno/previm'
-NeoBundle 'tyru/open-browser.vim'
-NeoBundle 'https://github.com/powerline/powerline.git', { 'rtp' : 'powerline/bindings/vim'}
-NeoBundle 'tomasr/molokai'
-NeoBundle 'lilydjwg/colorizer'
+  " Let dein manage dein
+  " Required:
+  call dein#add('/Users/yuki/.vim/dein/repos/github.com/Shougo/dein.vim')
 
-call neobundle#end()
+  " Add or remove your plugins here:
+  call dein#add('Shougo/neosnippet.vim')
+  call dein#add('Shougo/neosnippet-snippets')
+  call dein#add('Shougo/unite.vim')
+  call dein#add('Shougo/neomru.vim')
+  call dein#add('Shougo/neocomplete')
+  call dein#add('ujihisa/unite-colorscheme')
+  call dein#add('scrooloose/nerdtree')
+  call dein#add('tpope/vim-surround')
+  call dein#add('tomtom/tcomment_vim')
+  call dein#add('nathanaelkane/vim-indent-guides')
+  call dein#add('othree/html5.vim')
+  call dein#add('hail2u/vim-css3-syntax')
+  call dein#add('jelera/vim-javascript-syntax')
+  call dein#add('mattn/emmet-vim')
+  call dein#add('bronson/vim-trailing-whitespace')
+  call dein#add('plasticboy/vim-markdown')
+  call dein#add('kannokanno/previm')
+  call dein#add('tyru/open-browser.vim')
+  call dein#add('powerline/powerline.git', {'rtp': 'powerline/bindings/vim/'})
+  call dein#add('tomasr/molokai')
+  call dein#add('lilydjwg/colorizer')
 
-" Required
+  " You can specify revision/branch/tag.
+  "call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
+
+  " Required:
+  call dein#end()
+  call dein#save_state()
+endif
+
+" Required:
 filetype plugin indent on
+syntax enable
 
-" If there are uninstalled bundles found on startup,
-" this will convenientry prompt you to install them.
-NeoBundleCheck
-" }}}
+" If you want to install not installed plugins on startup.
+if dein#check_install()
+  call dein#install()
+endif
+
+"End dein Scripts-------------------------
 
 
 " Unite.vim {{{
@@ -247,3 +246,8 @@ if has('conceal')
   set conceallevel=2 concealcursor=niv
 endif
 " }}}
+
+" color settings
+set background=dark
+colorscheme molokai
+let g:solarized_termcolors=256
