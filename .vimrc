@@ -251,3 +251,5 @@ endif
 set background=dark
 colorscheme molokai
 let g:solarized_termcolors=256
+
+set backspace=indent,eol,start
