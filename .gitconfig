@@ -1,9 +1,18 @@
-[user]
-	name = chus0n
-	email = public.chuson@gmail.com
 [credential]
 	helper = osxkeychain
 [ghq]
 	root = /Users/yuki/src
 [core]
 	excludesfile = /Users/yuki/.gitignore
+	autocrlf = input
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[user]
+	name = chus0n
+	email = public.chuson@gmail.com
+[pull]
+	rebase = false
