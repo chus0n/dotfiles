@@ -147,11 +147,13 @@ let g:indent_guides_enable_on_vim_startup = 1
 
 " airline {{{
 set laststatus=2
+set showtabline=2
+set t_Co=256
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
 let g:airline#extensions#whitespace#mixed_indent_algo = 1
-let g:airline_theme = 'light'
+let g:airline_theme = 'dark'
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
 endif
@@ -185,7 +187,7 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = '☰'
 let g:airline_symbols.maxlinenr = ''
-" }}}
+""}}}
 
 " markdown {{{
 au BufRead,BufNewFile *.md set filetype=markdown
