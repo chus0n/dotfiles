@@ -99,12 +99,6 @@ jenv() {
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 #export PATH="$PATH:`pwd`/bin"
 
-# flutter
-export PATH="$PATH:/Users/yuki/src/github.com/flutter/flutter/bin"
-
-# heroku autocomplete setup
-HEROKU_AC_ZSH_SETUP_PATH=/Users/yuki/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
-
 # gist user
 export GIST_USER=chus0n
 
