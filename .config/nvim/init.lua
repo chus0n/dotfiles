@@ -34,6 +34,16 @@ vim.api.nvim_create_autocmd('ColorScheme', {
   callback = function() vim.api.nvim_set_hl(0, 'ZenkakuSpace', { reverse = true, fg = 'lightblue' }) end,
 })
 
+---------------------------------------------------------------------------
+-- カラースキーム（molokai）
+-- Neovim 本体のプラグイン管理（vim.pack）で取得する。初回起動時にインストール確認が出る。
+-- 保存先: ~/.local/share/nvim/site/pack/core/opt/molokai
+---------------------------------------------------------------------------
+vim.pack.add({ 'https://github.com/tomasr/molokai' })
+opt.background = 'dark'
+-- 未インストールでも起動時にエラーで止まらないよう pcall で読み込む
+pcall(vim.cmd.colorscheme, 'molokai')
+
 -- jj でノーマルモードへ
 vim.keymap.set('i', 'jj', '<Esc>', { silent = true })
 
