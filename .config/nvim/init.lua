@@ -44,6 +44,45 @@ opt.background = 'dark'
 -- 未インストールでも起動時にエラーで止まらないよう pcall で読み込む
 pcall(vim.cmd.colorscheme, 'molokai')
 
+---------------------------------------------------------------------------
+-- telescope（unite の代わり）
+-- キーは .vimrc の unite と同じ:
+--   <C-p> バッファ一覧 / <C-n> ファイル一覧 / <C-z> 最近使ったファイル
+-- 追加: <leader>fg 全文検索（ripgrep） / <leader>fh ヘルプ検索
+-- telescope の中: <C-j> 横分割で開く / <C-k> 縦分割で開く / <Esc> 2 回で閉じる
+---------------------------------------------------------------------------
+vim.pack.add({
+  'https://github.com/nvim-lua/plenary.nvim',
+  'https://github.com/nvim-telescope/telescope.nvim',
+})
+
+local ok_telescope, telescope = pcall(require, 'telescope')
+if ok_telescope then
+  local actions = require('telescope.actions')
+  local builtin = require('telescope.builtin')
+
+  telescope.setup({
+    defaults = {
+      mappings = {
+        i = {
+          ['<C-j>'] = actions.select_horizontal,
+          ['<C-k>'] = actions.select_vertical,
+        },
+        n = {
+          ['<C-j>'] = actions.select_horizontal,
+          ['<C-k>'] = actions.select_vertical,
+        },
+      },
+    },
+  })
+
+  vim.keymap.set('n', '<C-p>', builtin.buffers, { desc = 'バッファ一覧' })
+  vim.keymap.set('n', '<C-n>', builtin.find_files, { desc = 'ファイル一覧' })
+  vim.keymap.set('n', '<C-z>', builtin.oldfiles, { desc = '最近使ったファイル' })
+  vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = '全文検索' })
+  vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'ヘルプ検索' })
+end
+
 -- jj でノーマルモードへ
 vim.keymap.set('i', 'jj', '<Esc>', { silent = true })
 
