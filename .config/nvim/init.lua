@@ -6,6 +6,10 @@
 ---------------------------------------------------------------------------
 local opt = vim.opt
 
+-- 標準のファイラー netrw を無効化（nvim-tree と競合するため、先頭で設定する）
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 opt.number = true
 opt.tabstop = 2
 opt.shiftwidth = 2
@@ -81,6 +85,38 @@ if ok_telescope then
   vim.keymap.set('n', '<C-z>', builtin.oldfiles, { desc = '最近使ったファイル' })
   vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = '全文検索' })
   vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'ヘルプ検索' })
+end
+
+---------------------------------------------------------------------------
+-- nvim-tree（nerdtree の代わり）
+--   <leader>e ツリーの表示・非表示 / <leader>E 今のファイルをツリーで表示
+-- ツリーの中: <CR> 開く / a 作成 / d 削除 / r 名前変更 / g? キー一覧
+-- アイコンは Nerd Font がなくても表示できる記号にしている
+---------------------------------------------------------------------------
+vim.pack.add({ 'https://github.com/nvim-tree/nvim-tree.lua' })
+
+local ok_tree, nvim_tree = pcall(require, 'nvim-tree')
+if ok_tree then
+  nvim_tree.setup({
+    renderer = {
+      icons = {
+        show = { file = false, folder = false, folder_arrow = true, git = true },
+        glyphs = {
+          folder = { arrow_closed = '▸', arrow_open = '▾' },
+          git = {
+            unstaged = '✗', staged = '✓', unmerged = '!', renamed = '➜',
+            untracked = '★', deleted = '-', ignored = '◌',
+          },
+        },
+      },
+    },
+    filters = { git_ignored = false }, -- .gitignore 対象（kernel.elf など）も表示
+  })
+
+  local tree_api = require('nvim-tree.api')
+  vim.keymap.set('n', '<leader>e', tree_api.tree.toggle, { desc = 'ツリーの表示切り替え' })
+  vim.keymap.set('n', '<leader>E', function() tree_api.tree.find_file({ open = true, focus = true }) end,
+    { desc = '今のファイルをツリーで表示' })
 end
 
 -- jj でノーマルモードへ

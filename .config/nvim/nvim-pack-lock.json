@@ -4,6 +4,10 @@
       "rev": "c67bdfcdb31415aa0ade7f8c003261700a885476",
       "src": "https://github.com/tomasr/molokai"
     },
+    "nvim-tree.lua": {
+      "rev": "5cc8d425c2bf3c09041a2db3cfff6197e2dce34d",
+      "src": "https://github.com/nvim-tree/nvim-tree.lua"
+    },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
