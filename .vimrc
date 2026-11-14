@@ -32,11 +32,44 @@ if has('syntax')
 endif
 
 " 囲い文字の補完
-inoremap { {}<LEFT>
-inoremap ( ()<LEFT>
-inoremap [ []<LEFT>
-inoremap ' ''<LEFT>
-inoremap " ""<LEFT>
+" - 直後が英数字なら開き括弧を単独で入力
+" - 直後に同じ閉じ文字があれば飛び越える（"())" の二重入力防止）
+" - 空ペアの間で <BS> を押すとペアごと削除
+function! s:NextChar() abort
+  return getline('.')[col('.') - 1]
+endfunction
+function! s:PrevChar() abort
+  return col('.') > 1 ? getline('.')[col('.') - 2] : ''
+endfunction
+function! s:OpenPair(open, close) abort
+  return s:NextChar() =~# '\w' ? a:open : a:open . a:close . "\<Left>"
+endfunction
+function! s:ClosePair(close) abort
+  return s:NextChar() ==# a:close ? "\<Right>" : a:close
+endfunction
+function! s:QuotePair(q) abort
+  if s:NextChar() ==# a:q
+    return "\<Right>"
+  endif
+  " 英数字の直前・直後（例: don't）ではペアにしない
+  if s:PrevChar() =~# '\w' || s:NextChar() =~# '\w'
+    return a:q
+  endif
+  return a:q . a:q . "\<Left>"
+endfunction
+function! s:InPair() abort
+  return index(['()', '[]', '{}', "''", '""'], s:PrevChar() . s:NextChar()) >= 0
+endfunction
+
+inoremap <expr> { <SID>OpenPair('{', '}')
+inoremap <expr> ( <SID>OpenPair('(', ')')
+inoremap <expr> [ <SID>OpenPair('[', ']')
+inoremap <expr> } <SID>ClosePair('}')
+inoremap <expr> ) <SID>ClosePair(')')
+inoremap <expr> ] <SID>ClosePair(']')
+inoremap <expr> ' <SID>QuotePair("'")
+inoremap <expr> " <SID>QuotePair('"')
+inoremap <expr> <BS> <SID>InPair() ? "\<Del>\<BS>" : "\<BS>"
 
 " insert mode escape
 inoremap <silent> jj <ESC>
@@ -67,22 +100,23 @@ if &compatible
 endif
 
 " Required:
-set runtimepath+=/Users/yuki/.vim/dein/repos/github.com/Shougo/dein.vim
+set runtimepath+=/Users/yuki/.cache/dein/repos/github.com/Shougo/dein.vim
 
 " Required:
-if dein#load_state('/Users/yuki/.vim/dein')
-  call dein#begin('/Users/yuki/.vim/dein')
+if dein#load_state('/Users/yuki/.cache/dein')
+  call dein#begin('/Users/yuki/.cache/dein')
 
   " Let dein manage dein
   " Required:
-  call dein#add('/Users/yuki/.vim/dein/repos/github.com/Shougo/dein.vim')
+  call dein#add('/Users/yuki/.cache/dein/repos/github.com/Shougo/dein.vim')
 
   " Add or remove your plugins here:
-  call dein#add('Shougo/neosnippet.vim')
-  call dein#add('Shougo/neosnippet-snippets')
   call dein#add('Shougo/unite.vim')
   call dein#add('Shougo/neomru.vim')
-  call dein#add('Shougo/neocomplete')
+  call dein#add('prabirshrestha/vim-lsp')
+  call dein#add('mattn/vim-lsp-settings')
+  call dein#add('prabirshrestha/asyncomplete.vim')
+  call dein#add('prabirshrestha/asyncomplete-lsp.vim')
   call dein#add('ujihisa/unite-colorscheme')
   call dein#add('scrooloose/nerdtree')
   call dein#add('tpope/vim-surround')
@@ -193,98 +227,49 @@ let g:airline_symbols.maxlinenr = ''
 au BufRead,BufNewFile *.md set filetype=markdown
 " }}}
 
-" neocomplete {{{
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocompete#enable_start_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
-" Define dictionary.
-let g:neocomplete#source#dictionary#dictionaries = {
-      \ 'default' : '',
-      \ 'vimshell' : $HOME.'/.vimshell_hist',
-      \ 'scheme' : $HOME.'/.gosh_completions',
-        \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-  let g:neocomplete#keyword_patterns = {}
+" LSP / 補完 (vim-lsp + asyncomplete + clangd) {{{
+" C/C++ は Homebrew LLVM の clangd を使う（RISC-V ターゲット対応）
+if executable('/opt/homebrew/opt/llvm/bin/clangd')
+  augroup lsp_clangd
+    autocmd!
+    autocmd User lsp_setup call lsp#register_server({
+          \ 'name': 'clangd',
+          \ 'cmd': {server_info->['/opt/homebrew/opt/llvm/bin/clangd', '--header-insertion=never']},
+          \ 'allowlist': ['c', 'cpp'],
+          \ })
+  augroup END
 endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+let g:lsp_settings = {'clangd': {'disabled': v:true}}
 
-" Plugin key-mappings.
-inoremap <expr><C-g>    neocomplete#undo_completion()
-inoremap <expr><C-l>    neocomplete#complete_common_string()
+let g:asyncomplete_auto_popup = 1
+let g:asyncomplete_popup_delay = 100
+set completeopt=menuone,noinsert,noselect,popup
+set shortmess+=c
 
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return (pumvisible() ? "\<C-y>" : "") . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? "\<C-y>" : "\<CR>"
+" <Tab>/<S-Tab> で候補選択、<CR> で確定
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" {|} の間で <CR> → ブロックを展開してインデント
+inoremap <expr> <CR>    pumvisible() ? asyncomplete#close_popup() . "\<CR>"
+      \ : (<SID>PrevChar() . <SID>NextChar() ==# '{}' ? "\<CR>\<Esc>O" : "\<CR>")
+
+let g:lsp_diagnostics_echo_cursor = 1
+function! s:on_lsp_buffer_enabled() abort
+  setlocal omnifunc=lsp#complete
+  setlocal signcolumn=yes
+  nmap <buffer> gd <plug>(lsp-definition)
+  nmap <buffer> gr <plug>(lsp-references)
+  nmap <buffer> K  <plug>(lsp-hover)
+  nmap <buffer> <leader>rn <plug>(lsp-rename)
+  nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+  nmap <buffer> ]g <plug>(lsp-next-diagnostic)
 endfunction
-" <TAB>: completion.
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
-
-" AutoComplPop like behavior.
-"let g:neocomplete#enable_auto_select = 1
-
-" Shell like behavior(not recommended.)
-"set completeopt+=longest
-"let g:neocomplete#enable_auto_select = 1
-"let g:neocomplete#disable_auto_complete = 1
-"inoremap <expr><TAB>   pumvisible() ? "\<DOWN>" : "\<C-x>\<C-u>"
-
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-" let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*:;'
-" let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-" let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-" let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+augroup lsp_install
+  autocmd!
+  autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
 " }}}
 
-" neosnippet {{{
-" Plugin key-mappings
-imap <C-k>    <Plug>(neosnippet_expand_or_jump)
-smap <C-k>    <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>    <Plug>(neosnippet_expand_target)
-
-" SuperTab like snippets behavior.
-" imap <expr><TAB>
-" \ pumvisible() ? "\<C-n>" :
-" \ neosnippet#expandable_or_jumpable() ?
-" \   "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandble_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-
-" For conceal markers.
-if has('conceal')
-  set conceallevel=2 concealcursor=niv
-endif
-" }}}
 
 " color settings
 set background=dark
