@@ -1,0 +1,2 @@
+# git-secrets: .gitconfig に書いたパターン定義そのものは許可する
+^\.gitconfig:[0-9]+:[[:space:]]*patterns = 
