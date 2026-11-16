@@ -1,5 +1,6 @@
--- 最小限の Neovim 設定（プラグインなし）
+-- 最小限の Neovim 設定
 -- .vimrc の基本設定 + 括弧補完 + 本体の LSP（clangd）による補完
+-- プラグイン（vim.pack）: molokai / telescope / nvim-tree
 
 ---------------------------------------------------------------------------
 -- 基本設定
@@ -32,7 +33,12 @@ opt.shortmess:append('c')
 -- 全角スペースを可視化
 vim.api.nvim_set_hl(0, 'ZenkakuSpace', { reverse = true, fg = 'lightblue' })
 vim.api.nvim_create_autocmd({ 'VimEnter', 'WinEnter', 'BufRead' }, {
-  callback = function() vim.fn.matchadd('ZenkakuSpace', '　') end,
+  callback = function()
+    -- matchadd はウィンドウごとに積み上がるので、未登録のウィンドウにだけ追加する
+    if not vim.w.zenkaku_match then
+      vim.w.zenkaku_match = vim.fn.matchadd('ZenkakuSpace', '　')
+    end
+  end,
 })
 vim.api.nvim_create_autocmd('ColorScheme', {
   callback = function() vim.api.nvim_set_hl(0, 'ZenkakuSpace', { reverse = true, fg = 'lightblue' }) end,
@@ -190,15 +196,21 @@ end, { expr = true })
 
 ---------------------------------------------------------------------------
 -- LSP（Neovim 本体の機能のみ）
--- C/C++ は Homebrew LLVM の clangd を使う（RISC-V ターゲット対応）
+-- C/C++ は Homebrew LLVM の clangd を優先する（RISC-V ターゲット対応）
+-- なければ PATH 上の clangd（Xcode 付属など）を使い、どちらもなければ LSP を有効にしない
 -- プロジェクトの compile_flags.txt / compile_commands.json を読む
 ---------------------------------------------------------------------------
-vim.lsp.config('clangd', {
-  cmd = { '/opt/homebrew/opt/llvm/bin/clangd', '--header-insertion=never' },
-  filetypes = { 'c', 'cpp' },
-  root_markers = { 'compile_commands.json', 'compile_flags.txt', '.git' },
-})
-vim.lsp.enable('clangd')
+local clangd = '/opt/homebrew/opt/llvm/bin/clangd'
+if vim.fn.executable(clangd) ~= 1 then clangd = 'clangd' end
+
+if vim.fn.executable(clangd) == 1 then
+  vim.lsp.config('clangd', {
+    cmd = { clangd, '--header-insertion=never' },
+    filetypes = { 'c', 'cpp' },
+    root_markers = { 'compile_commands.json', 'compile_flags.txt', '.git' },
+  })
+  vim.lsp.enable('clangd')
+end
 
 vim.diagnostic.config({ virtual_text = true })
 
